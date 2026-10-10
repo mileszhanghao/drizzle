@@ -1,13 +1,43 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { App as AntApp, Button, Col, Empty, Input, Layout, Row, Segmented, Space, Spin, Typography } from 'antd'
+import { Alert, App as AntApp, Button, Col, Empty, Input, Layout, Row, Segmented, Space, Spin, Typography } from 'antd'
 import { useCallback, useState } from 'react'
-import { ApiError, api, loadSession, saveSession, type Session } from './api'
+import { ApiError, IS_DEMO, api, loadSession, saveSession, type Session } from './api'
 import AuthCard from './components/AuthCard'
 import CreatePostModal from './components/CreatePostModal'
 import PostCard from './components/PostCard'
 
 const { Header, Content } = Layout
+
+const REPO_URL = 'https://github.com/mileszhanghao/drizzle'
+
+function DemoBanner({ onReset }: { onReset: () => void }) {
+  return (
+    <Alert
+      type="info"
+      showIcon
+      style={{ marginBottom: 24 }}
+      title="Demo mode"
+      description={
+        <>
+          This demo runs in your browser with sample posts, and anything you post stays in this browser. Sign in
+          as <Typography.Text code>rainy_day</Typography.Text> / <Typography.Text code>drizzle-demo</Typography.Text>{' '}
+          or create an account. The real app is a Go API with PostgreSQL full-text search and OpenAI image
+          generation; here &ldquo;Generate&rdquo; draws a placeholder instead. See the{' '}
+          <a href={REPO_URL} target="_blank" rel="noreferrer">
+            source on GitHub
+          </a>
+          .
+        </>
+      }
+      action={
+        <Button size="small" onClick={onReset}>
+          Reset demo
+        </Button>
+      }
+    />
+  )
+}
 
 export default function App() {
   const queryClient = useQueryClient()
@@ -49,10 +79,11 @@ export default function App() {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-        <Typography.Title level={3} style={{ color: '#fff', margin: 0 }}>
-          SocialAI
-        </Typography.Title>
+      <Header className="app-header">
+        <div className="brand">
+          <Typography.Title level={3}>Drizzle</Typography.Title>
+          <span className="tagline">photos from a rainy city</span>
+        </div>
         {session && (
           <Space>
             <Typography.Text style={{ color: '#fff' }}>@{session.username}</Typography.Text>
@@ -61,6 +92,15 @@ export default function App() {
         )}
       </Header>
       <Content style={{ padding: '24px 16px', maxWidth: 1100, width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
+        {IS_DEMO && (
+          <DemoBanner
+            onReset={async () => {
+              ;(await import('./demo/demoApi')).resetDemo()
+              signOut()
+              queryClient.resetQueries()
+            }}
+          />
+        )}
         {!session ? (
           <AuthCard
             onSignedIn={(s) => {
@@ -82,7 +122,7 @@ export default function App() {
                 />
                 <Input.Search
                   allowClear
-                  placeholder="Search captions (e.g. hiking -rain)"
+                  placeholder="Search captions (e.g. ferry, rain -fog)"
                   onSearch={setSearch}
                   style={{ width: 280 }}
                 />
@@ -110,6 +150,7 @@ export default function App() {
               open={creating}
               token={session.token}
               aiEnabled={Boolean(health.data?.imageGeneration)}
+              demo={Boolean(health.data?.demo)}
               onClose={() => setCreating(false)}
             />
           </Space>

@@ -34,6 +34,15 @@ export default function PostCard({ post, mine, onDelete }: Props) {
       <Typography.Text type="secondary" style={{ fontSize: 12 }}>
         {new Date(post.createdAt).toLocaleString()}
       </Typography.Text>
+      {post.credit && (
+        <Typography.Text type="secondary" className="credit">
+          Photo:{' '}
+          <a href={post.credit.url} target="_blank" rel="noreferrer">
+            {post.credit.author}
+          </a>
+          , {post.credit.license}, via Wikimedia Commons
+        </Typography.Text>
+      )}
     </Card>
   )
 }

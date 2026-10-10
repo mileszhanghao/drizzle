@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/mileszhanghao/socialai/backend/internal/store"
+	"github.com/mileszhanghao/drizzle/backend/internal/store"
 )
 
 // Allowed content types, detected from the file's bytes. The course version

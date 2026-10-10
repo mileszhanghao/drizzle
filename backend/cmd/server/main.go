@@ -1,4 +1,4 @@
-// Command server runs the SocialAI API.
+// Command server runs the Drizzle API.
 package main
 
 import (
@@ -12,11 +12,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/mileszhanghao/socialai/backend/internal/ai"
-	"github.com/mileszhanghao/socialai/backend/internal/auth"
-	"github.com/mileszhanghao/socialai/backend/internal/httpapi"
-	"github.com/mileszhanghao/socialai/backend/internal/media"
-	"github.com/mileszhanghao/socialai/backend/internal/store"
+	"github.com/mileszhanghao/drizzle/backend/internal/ai"
+	"github.com/mileszhanghao/drizzle/backend/internal/auth"
+	"github.com/mileszhanghao/drizzle/backend/internal/httpapi"
+	"github.com/mileszhanghao/drizzle/backend/internal/media"
+	"github.com/mileszhanghao/drizzle/backend/internal/store"
 )
 
 func main() {

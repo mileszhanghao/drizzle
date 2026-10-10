@@ -1,4 +1,4 @@
-module github.com/mileszhanghao/socialai/backend
+module github.com/mileszhanghao/drizzle/backend
 
 go 1.24
 

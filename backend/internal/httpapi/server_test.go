@@ -15,9 +15,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mileszhanghao/socialai/backend/internal/auth"
-	"github.com/mileszhanghao/socialai/backend/internal/media"
-	"github.com/mileszhanghao/socialai/backend/internal/store"
+	"github.com/mileszhanghao/drizzle/backend/internal/auth"
+	"github.com/mileszhanghao/drizzle/backend/internal/media"
+	"github.com/mileszhanghao/drizzle/backend/internal/store"
 )
 
 // A real 1x1 PNG so content sniffing sees genuine image bytes.

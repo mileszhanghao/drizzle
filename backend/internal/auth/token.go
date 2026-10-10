@@ -14,7 +14,7 @@ import (
 // hard-coded the key "secret", so anyone could forge a token for any user.
 const MinSecretBytes = 32
 
-const issuer = "socialai"
+const issuer = "drizzle"
 
 // Tokens issues and verifies HS256 JWTs.
 type Tokens struct {

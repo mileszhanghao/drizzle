@@ -15,7 +15,7 @@ jobs:
         image: public.ecr.aws/docker/library/postgres:16-alpine
         env:
           POSTGRES_PASSWORD: secret
-          POSTGRES_DB: socialai_test
+          POSTGRES_DB: drizzle_test
         ports:
           - 5432:5432
         options: >-
@@ -23,7 +23,7 @@ jobs:
           --health-interval 5s
           --health-retries 10
     env:
-      TEST_DATABASE_URL: postgres://postgres:secret@localhost:5432/socialai_test?sslmode=disable
+      TEST_DATABASE_URL: postgres://postgres:secret@localhost:5432/drizzle_test?sslmode=disable
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
@@ -57,4 +57,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - run: docker build -t socialai .
+      - run: docker build -t drizzle .
