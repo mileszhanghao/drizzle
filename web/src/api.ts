@@ -5,6 +5,8 @@ export interface Post {
   mediaType: 'image' | 'video'
   mediaUrl: string
   createdAt: string
+  /** Photo credit, used by the demo's seeded Wikimedia Commons photos. */
+  credit?: { author: string; license: string; url: string }
 }
 
 export interface Session {
@@ -23,7 +25,7 @@ export class ApiError extends Error {
 
 // The token lives in sessionStorage: it survives a page refresh but not
 // closing the tab, and it is never put in a URL.
-const KEY = 'socialai-session'
+const KEY = 'drizzle-session'
 
 export function loadSession(): Session | null {
   try {
@@ -60,8 +62,28 @@ const json = (body: unknown): RequestInit => ({
   body: JSON.stringify(body),
 })
 
-export const api = {
-  health: () => request<{ status: string; imageGeneration: boolean }>('/api/health'),
+export interface Health {
+  status: string
+  imageGeneration: boolean
+  /** Set only in the GitHub Pages demo, where images are placeholders drawn in the browser. */
+  demo?: boolean
+}
+
+export interface Api {
+  health(): Promise<Health>
+  signup(username: string, password: string): Promise<{ username: string }>
+  signin(username: string, password: string): Promise<Session>
+  posts(token: string, filter: { q?: string; user?: string }): Promise<Post[]>
+  createPost(token: string, message: string, file: Blob, filename: string): Promise<Post>
+  deletePost(token: string, id: string): Promise<void>
+  generateImage(token: string, prompt: string): Promise<{ dataUrl: string }>
+}
+
+/** GitHub Pages build: no server, a sample API runs in the browser. */
+export const IS_DEMO = import.meta.env.VITE_DEMO === 'true'
+
+const httpApi: Api = {
+  health: () => request<Health>('/api/health'),
   signup: (username: string, password: string) => request<{ username: string }>('/api/signup', json({ username, password })),
   signin: (username: string, password: string) => request<Session>('/api/signin', json({ username, password })),
   posts: (token: string, filter: { q?: string; user?: string }) => {
@@ -79,6 +101,20 @@ export const api = {
   deletePost: (token: string, id: string) => request<void>(`/api/posts/${id}`, { method: 'DELETE' }, token),
   generateImage: (token: string, prompt: string) => request<{ dataUrl: string }>('/api/ai/images', json({ prompt }), token),
 }
+
+// The demo module is only bundled into the demo build.
+const demo = () => import('./demo/demoApi').then((m) => m.demoApi)
+const demoApi: Api = {
+  health: async () => (await demo()).health(),
+  signup: async (u, p) => (await demo()).signup(u, p),
+  signin: async (u, p) => (await demo()).signin(u, p),
+  posts: async (t, f) => (await demo()).posts(t, f),
+  createPost: async (t, m, f, n) => (await demo()).createPost(t, m, f, n),
+  deletePost: async (t, id) => (await demo()).deletePost(t, id),
+  generateImage: async (t, p) => (await demo()).generateImage(t, p),
+}
+
+export const api: Api = IS_DEMO ? demoApi : httpApi
 
 /** Converts a data: URL returned by the image endpoint into an uploadable Blob. */
 export async function dataUrlToBlob(dataUrl: string): Promise<Blob> {

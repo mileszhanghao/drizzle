@@ -25,7 +25,7 @@ describe('App', () => {
   })
 
   it('loads the feed with the bearer token and marks the user’s own posts', async () => {
-    sessionStorage.setItem('socialai-session', JSON.stringify({ token: 'tok', username: 'miles' }))
+    sessionStorage.setItem('drizzle-session', JSON.stringify({ token: 'tok', username: 'miles' }))
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
       const url = String(input)
       if (url === '/api/health') return new Response(JSON.stringify({ status: 'ok', imageGeneration: true }))
@@ -51,7 +51,7 @@ describe('App', () => {
   })
 
   it('signs out when the token is rejected', async () => {
-    sessionStorage.setItem('socialai-session', JSON.stringify({ token: 'expired', username: 'miles' }))
+    sessionStorage.setItem('drizzle-session', JSON.stringify({ token: 'expired', username: 'miles' }))
     vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) =>
       String(input) === '/api/health'
         ? new Response(JSON.stringify({ status: 'ok', imageGeneration: false }))
@@ -59,6 +59,6 @@ describe('App', () => {
     )
     renderApp()
     expect(await screen.findByRole('button', { name: 'Sign in' })).toBeInTheDocument()
-    expect(sessionStorage.getItem('socialai-session')).toBeNull()
+    expect(sessionStorage.getItem('drizzle-session')).toBeNull()
   })
 })

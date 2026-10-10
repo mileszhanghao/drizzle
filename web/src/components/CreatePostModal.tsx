@@ -8,10 +8,12 @@ interface Props {
   open: boolean
   token: string
   aiEnabled: boolean
+  /** GitHub Pages demo: images only, and Generate draws a placeholder. */
+  demo?: boolean
   onClose: () => void
 }
 
-export default function CreatePostModal({ open, token, aiEnabled, onClose }: Props) {
+export default function CreatePostModal({ open, token, aiEnabled, demo = false, onClose }: Props) {
   const queryClient = useQueryClient()
   const { message } = App.useApp()
   const [caption, setCaption] = useState('')
@@ -69,7 +71,7 @@ export default function CreatePostModal({ open, token, aiEnabled, onClose }: Pro
             label: 'Upload',
             children: (
               <Upload.Dragger
-                accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm"
+                accept={demo ? 'image/jpeg,image/png,image/gif,image/webp' : 'image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm'}
                 maxCount={1}
                 beforeUpload={(f) => {
                   setFile(f)
@@ -80,17 +82,25 @@ export default function CreatePostModal({ open, token, aiEnabled, onClose }: Pro
                 <p className="ant-upload-drag-icon">
                   <InboxOutlined />
                 </p>
-                <p className="ant-upload-text">Click or drag an image or video</p>
-                <p className="ant-upload-hint">JPEG, PNG, GIF, WebP, MP4 or WebM, up to 50 MB</p>
+                <p className="ant-upload-text">{demo ? 'Click or drag an image' : 'Click or drag an image or video'}</p>
+                <p className="ant-upload-hint">
+                  {demo ? 'JPEG, PNG, GIF or WebP. Resized and kept in this browser.' : 'JPEG, PNG, GIF, WebP, MP4 or WebM, up to 50 MB'}
+                </p>
               </Upload.Dragger>
             ),
           },
           {
             key: 'ai',
-            label: 'Generate with AI',
+            label: demo ? 'Generate (demo)' : 'Generate with AI',
             disabled: !aiEnabled,
             children: (
               <Space orientation="vertical" style={{ width: '100%' }}>
+                {demo && (
+                  <Typography.Text type="secondary">
+                    In the full app this calls OpenAI&apos;s image model from the server, with a per-user quota. The
+                    demo has no key, so it draws a placeholder rain poster from your prompt.
+                  </Typography.Text>
+                )}
                 <Input.TextArea
                   rows={3}
                   maxLength={1000}

@@ -1,12 +1,14 @@
-# SocialAI
+# Drizzle
 
-A photo and video sharing app with AI image generation. Users sign up, post images or videos with captions, search posts by caption, and can generate an image from a text prompt before posting it.
+Photos from a rainy city. Drizzle is a photo and video sharing app with AI image generation. Users sign up, post images or videos with captions, search posts by caption, and can generate an image from a text prompt before posting it.
+
+**Live demo:** https://mileszhanghao.github.io/drizzle/ — the React front end with a sample API that runs in your browser. Sign in as `rainy_day` / `drizzle-demo` or create an account. The feed is seeded with Seattle photos from Wikimedia Commons, each credited on its card. Search works the same way as on the server (`ferry`, `rain -fog`). Uploads are resized and kept in your browser. With no OpenAI key, "Generate" draws a labeled placeholder poster from your prompt instead of calling the image model. The demo API (`web/src/demo/`) mirrors the Go server's validation rules and error messages, and it has its own tests.
 
 **Stack:** Go 1.24 (standard library `net/http` routing, `crypto/pbkdf2`) · PostgreSQL 16 with full-text search · JWT (golang-jwt v5) · OpenAI Images API · React 19 · TypeScript · Vite · Ant Design · TanStack Query · Docker · GitHub Actions
 
 ## Background
 
-I first built this in LaiOffer's Social AI course (2025): a Go backend using Elasticsearch for users and posts, Google Cloud Storage for media, JWT auth, deployment to Google App Engine, and a React front end that generated images with DALL·E. In 2026 I rebuilt it to fix the problems I found when re-reading the original code. The rebuild was developed with AI pair-programming assistance (Claude).
+I first built this in LaiOffer's Social AI course (2025), where it was called SocialAI: a Go backend using Elasticsearch for users and posts, Google Cloud Storage for media, JWT auth, deployment to Google App Engine, and a React front end that generated images with DALL·E. In 2026 I rebuilt it to fix the problems I found when re-reading the original code. The rebuild was developed with AI pair-programming assistance (Claude).
 
 ## What changed from the course version, and why
 

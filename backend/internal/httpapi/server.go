@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/mileszhanghao/socialai/backend/internal/ai"
-	"github.com/mileszhanghao/socialai/backend/internal/auth"
-	"github.com/mileszhanghao/socialai/backend/internal/media"
-	"github.com/mileszhanghao/socialai/backend/internal/store"
+	"github.com/mileszhanghao/drizzle/backend/internal/ai"
+	"github.com/mileszhanghao/drizzle/backend/internal/auth"
+	"github.com/mileszhanghao/drizzle/backend/internal/media"
+	"github.com/mileszhanghao/drizzle/backend/internal/store"
 )
 
 const (

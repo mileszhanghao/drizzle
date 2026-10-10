@@ -1,3 +1,38 @@
 body {
   margin: 0;
 }
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  height: auto;
+  min-height: 64px;
+  padding: 10px 16px;
+  background: linear-gradient(120deg, #134e4a, #0f766e 60%, #155e75);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.brand h3.ant-typography {
+  color: #fff;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.tagline {
+  color: #a7f3d0;
+  font-size: 14px;
+}
+
+.credit {
+  display: block;
+  font-size: 11px;
+  margin-top: 4px;
+}
