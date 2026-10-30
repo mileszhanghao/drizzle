@@ -14,10 +14,15 @@ jobs:
       TEST_DATABASE_URL: postgres://postgres:secret@localhost:5432/drizzle_test?sslmode=disable
     steps:
       - uses: actions/checkout@v5
-      - name: Pull Postgres (with retries; registry pulls on CI runners sometimes fail)
+      - name: Pull Postgres (with retries and a fallback registry)
         run: |
-          for i in 1 2 3 4 5; do
-            docker pull public.ecr.aws/docker/library/postgres:16-alpine && exit 0
+          # Amazon's public registry first, Docker Hub as a fallback; either way the image
+          # ends up under the name the tests use.
+          IMG=public.ecr.aws/docker/library/postgres:16-alpine
+          for i in 1 2 3 4; do
+            for src in $IMG postgres:16-alpine; do
+              docker pull "$src" && docker tag "$src" "$IMG" && exit 0
+            done
             echo "pull failed (attempt $i), retrying"; sleep $((i * 10))
           done
           exit 1
