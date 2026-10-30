@@ -6,26 +6,26 @@ on:
 
 jobs:
   backend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: backend
-    services:
-      postgres:
-        image: public.ecr.aws/docker/library/postgres:16-alpine
-        env:
-          POSTGRES_PASSWORD: secret
-          POSTGRES_DB: drizzle_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 5s
-          --health-retries 10
     env:
       TEST_DATABASE_URL: postgres://postgres:secret@localhost:5432/drizzle_test?sslmode=disable
     steps:
       - uses: actions/checkout@v5
+      - name: Pull Postgres (with retries; registry pulls on CI runners sometimes fail)
+        run: |
+          for i in 1 2 3 4 5; do
+            docker pull public.ecr.aws/docker/library/postgres:16-alpine && exit 0
+            echo "pull failed (attempt $i), retrying"; sleep $((i * 10))
+          done
+          exit 1
+      - name: Start Postgres
+        run: |
+          docker run -d --name pg -p 5432:5432 -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=drizzle_test public.ecr.aws/docker/library/postgres:16-alpine
+          for i in $(seq 1 30); do docker exec pg pg_isready -h 127.0.0.1 -U postgres && exit 0; sleep 2; done
+          docker logs pg; exit 1
       - uses: actions/setup-go@v6
         with:
           go-version-file: backend/go.mod
@@ -37,7 +37,7 @@ jobs:
       - run: go build ./cmd/server
 
   web:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: web
@@ -54,7 +54,7 @@ jobs:
       - run: npm run build
 
   docker:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
       - run: docker build -t drizzle .
